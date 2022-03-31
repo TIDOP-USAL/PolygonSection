@@ -2,8 +2,13 @@
 
 #include "viewer/Viewer.h"
 
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_lib_io.h>
+
 #include "geometry/Plane.h"
 #include "geometry/Transform.h"
+#include "geometry/Poly.h"
 
 // Callbacks
 void leftButton(Viewer& viewer, int mouseX, int mouseY);
@@ -76,7 +81,6 @@ void leftButton(Viewer& viewer, int mouseX, int mouseY) {
         Vec3d localSpaceVertex = toLocalSpace(viewer, mouseX, mouseY);
         polygonVertices.push_back(localSpaceVertex);
 
-
         //------------------ DRAW ----------------------
         vtkNew<vtkPoints> pointsPolygon;
         for (int i = 0; i < polygonVertices.size(); i++) {
@@ -142,12 +146,15 @@ bool isInside(const std::vector<Vec3d>& polygon, const Vec3d& point) {
 void saveSection(Viewer& viewer, const std::vector<Vec3d>& polygon) {
     
     // Section point cloud
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr sectionCloud;
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr sectionCloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
     // Calculate plane which contains the polygon
     Vec3d firstPoint = polygon[0], secondPoint = polygon[1], thirdPoint = polygon[2];
     Plane plane = Plane::plane3points(firstPoint, secondPoint, thirdPoint);
     Vec3d normal = plane.getNormal();
+
+    // Polygon
+    Poly poly(polygon);
 
     // Trace lines for each point orthogonal to the plane and get its intersections
     for (pcl::PointXYZRGB& point : viewer.getCloud()->points) {
@@ -159,10 +166,13 @@ void saveSection(Viewer& viewer, const std::vector<Vec3d>& polygon) {
         Vec3d projectedPoint = plane.lineIntersection(line);
 
         // If projected point is inside of the polygon, the point is inside of the section
-        if (isInside(polygon, projectedPoint)) {
+        // As the z is always the same (the point and the polygon are in the same plane) we can ignore it
+        if (poly.isPointInside(projectedPoint))
+            sectionCloud->push_back(point);
 
-        }
     }
-
     // Save section
+    if (pcl::io::savePCDFileASCII("C:\\Users\\alber\\Desktop\\section.pcd", *sectionCloud) == -1)
+        std::cout << "Couldn't save point cloud" << std::endl;
+
 }
