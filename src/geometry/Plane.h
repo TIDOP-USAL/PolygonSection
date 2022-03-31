@@ -22,8 +22,8 @@ public:
     }
 
     static Plane plane3points(Vec3d& p1, Vec3d& p2, Vec3d& p3) {
-        Vec3d v1 = p2 - p1;
-        Vec3d v2 = p3 - p1;
+        Vec3d v1 = p1 - p2;
+        Vec3d v2 = p3 - p2;
         Vec3d normal = v1 ^ v2;
         double D = -(p1.x * normal.x + p1.y * normal.y + p1.z * normal.z);
         return Plane(normal.x, normal.y, normal.z, D);

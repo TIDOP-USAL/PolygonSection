@@ -4,20 +4,22 @@
 
 /*
 
-    Line equation:
+    Line vectorial equation:
 
-        r = (x0, y0, z0) + t(a, b, c)
+        r := (x, y, z) = (x0, y0, z0) + lambda * (a, b, c)
 
     Parametric equations:
             _
-            |   x = x0 + at
-        r   |   y = y0 + bt
-            |   z = z0 + bt
+            |   x = x0 + lambda * a
+        r   |   y = y0 + lambda * b
+            |   z = z0 + lambda * b
             -
 
     Where p = (x0, y0, z0) is a point and v = (a, b, c) is a vector
     we can obtain (a, b, c) from 2 given points, and consider (x0, y0, z0)
     the coordinates of one of those 2 points
+
+    For each value of lambda we get a point contained in the line
 */
 class Line {
 private:
@@ -44,5 +46,9 @@ public:
 
     inline Vec3d& getV() {
         return v;
+    }
+
+    inline Vec3d getPointAt(double lambda) {
+        return Vec3d(p.x + lambda * v.x, p.y + lambda * v.y, p.z + lambda * v.z);
     }
 };
