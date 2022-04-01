@@ -55,7 +55,7 @@ struct Vec3 {
 
     // Cross product
     inline Vec3 operator ^ (const Vec3& vec) {
-        return Vec3(y * vec.z - z * vec.y, x * vec.z - z * vec.x, x * vec.y - y * vec.x);
+        return Vec3(y * vec.z - z * vec.y, -x * vec.z + z * vec.x, x * vec.y - y * vec.x);
     }
 
     inline Vec3 operator + (const Vec3& vec) {
