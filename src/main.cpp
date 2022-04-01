@@ -10,7 +10,7 @@
 #include "geometry/Transform.h"
 #include "geometry/Poly.h"
 
-#define DRAW_PROJECTIONS
+//#define DRAW_PROJECTIONS
 
 // Callbacks
 void leftButton(Viewer& viewer, int mouseX, int mouseY);
